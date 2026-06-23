@@ -1,0 +1,54 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '4.1.0'
+	id 'io.spring.dependency-management' version '1.1.7'
+	id 'application'
+}
+
+group = 'com.web'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	// TODO: need to check about webmvc dependencies
+	// spring.main.web-application-type=none
+	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.2'
+	compileOnly 'org.projectlombok:lombok'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-actuator-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-websocket-test'
+	testCompileOnly 'org.projectlombok:lombok'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	testAnnotationProcessor 'org.projectlombok:lombok'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+tasks.register('runClient', JavaExec) {
+	classpath = sourceSets.main.runtimeClasspath
+	mainClass = 'com.web.chitchat.client.TerminalChatClient'
+
+	standardInput = System.in
+	// 👇 THIS disables Gradle noise
+	standardOutput = System.out
+	errorOutput = System.err
+	ignoreExitValue = true
+
+	systemProperty "spring.profiles.active", "client"
+}
